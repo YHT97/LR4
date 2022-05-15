@@ -14,15 +14,18 @@ public class LR4 {
             }
         }
         printTree(tree,"  ");
-        tree.remove(tree.getChildren().get(0));
+        tree.remove(tree.getChildren().get(0).getChildren().get(0));
         System.out.println("-----------------------------------------------------------------");
         printTree(tree,"  ");
+
+
 
     }
     private static <T> void printTree(Node<T> node, String appender) {
         System.out.println(appender + node.getData());
         node.getChildren().forEach(each -> printTree(each, appender + appender));
     }
+
     static class Data {
         public int[] index;
         public int data;
@@ -74,13 +77,21 @@ public class LR4 {
         }
 
         private void remove(Node<T> child){
+            if(child.children.size()>0) {
             Node<T> root = child.getChildren().get(child.getChildren().size()-1);
             root.setParent(child.getParent());
-            child.getChildren().remove(child.getChildren().size()-1);
-            root.children.addAll(child.getChildren());
-            for(int i=0;i<child.getParent().getChildren().size();i++){
-                if(child.getParent().getChildren().get(i)==child){
-                    child.getParent().getChildren().set(i,root);
+                child.getChildren().remove(child.getChildren().size() - 1);
+                root.children.addAll(child.getChildren());
+                for (int i = 0; i < child.getParent().getChildren().size(); i++) {
+                    if (child.getParent().getChildren().get(i) == child) {
+                        child.getParent().getChildren().set(i, root);
+                    }
+                }
+            }else{
+                for (int i = 0; i < child.getParent().getChildren().size(); i++) {
+                    if (child.getParent().getChildren().get(i) == child) {
+                        child.getParent().getChildren().remove(i);
+                    }
                 }
             }
         }
