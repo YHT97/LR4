@@ -1,171 +1,125 @@
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
 public class LR4 {
-    private static int[] getArray() {
-        int[] array = new int[3];
-        for (int i = 0; i < 3; i++) {
-            array[i] = (int) (Math.random() * 200) - 100;
-        }
-        return array;
-    }
-
-    private static String RandString() {
-        String alp = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        Random rand = new Random();
-        StringBuilder build = new StringBuilder();
-        for (int i = 0; i < 10; i++) {
-            build.append(alp.charAt(rand.nextInt(alp.length())));
-        }
-        return build.toString();
-    }
-
     public static void main(String[] args) {
-
-        TreeNode<Data> tree = new TreeNode<>();
-        tree.addChild(new Data());
+        Node<Data> tree = new Node<>(new Data());
+        for (int i = 0;i<3;i++){
+            tree.addChild(new Node<>(new Data()));
+        }
+        for(Node<Data> child : tree.getChildren()){
+            for(int i =0;i<3;i++){
+                child.addChild(new Node<>(new Data()));
+            }
+        }
+        printTree(tree,"  ");
+        tree.remove(tree.getChildren().get(0));
+        System.out.println("-----------------------------------------------------------------");
+        printTree(tree,"  ");
 
     }
-
-    public static class Data {
+    private static <T> void printTree(Node<T> node, String appender) {
+        System.out.println(appender + node.getData());
+        node.getChildren().forEach(each -> printTree(each, appender + appender));
+    }
+    static class Data {
         public int[] index;
         public int data;
         public String str;
 
         public Data() {
             this.index = getArray();
-            this.data = (int) (Math.random() * 200 - 100);
+            this.data = (int)(Math.random()*200-100);
             this.str = RandString();
         }
     }
 
-    public static class TreeNode<T> implements Iterable<TreeNode<T>> {
-
-        private final List<TreeNode<T>> elementsIndex;
-        public T data;
-        public TreeNode<T> parent;
-        public List<TreeNode<T>> children;
-
-        public TreeNode(/*T data*/) {
-            //this.data = data;
-            this.children = new LinkedList<>();
-            this.elementsIndex = new LinkedList<>();
-            this.elementsIndex.add(this);
+    static int[] getArray() {
+        int[] array = new int[3];
+        for (int i = 0; i < 3; i++) {
+            array[i] = (int) (Math.random() * 200) - 100;
         }
-
-        public boolean isRoot() {
-            return parent == null;
-        }
-
-        public boolean isLeaf() {
-            return children.size() == 0;
-        }
-
-        public void addChild(T child) {
-            TreeNode<T> childNode = new TreeNode<>();
-            childNode.parent = this;
-            this.children.add(childNode);
-            this.registerChildForSearch(childNode);
-        }
-
-        public int getLevel() {
-            if (this.isRoot())
-                return 0;
-            else
-                return parent.getLevel() + 1;
-        }
-
-        private void registerChildForSearch(TreeNode<T> node) {
-            elementsIndex.add(node);
-            if (parent != null)
-                parent.registerChildForSearch(node);
-        }
-
-        public TreeNode<T> findTreeNode(Comparable<T> cmp) {
-            for (TreeNode<T> element : this.elementsIndex) {
-                T elData = element.data;
-                if (cmp.compareTo(elData) == 0)
-                    return element;
-            }
-
-            return null;
-        }
-
-        @Override
-        public String toString() {
-            return data != null ? data.toString() : "[data null]";
-        }
-
-        public Iterator<TreeNode<T>> iterator() {
-            return new TreeNodeIter<>(this);
-        }
+        return array;
     }
+    public static String RandString(){
+        String alp = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        Random rand = new Random();
+        StringBuilder build = new StringBuilder();
+        for(int i=0;i<10;i++){
+            build.append(alp.charAt(rand.nextInt(alp.length())));
+        }
+        return build.toString();
+    }
+    public static class Node<T> {
 
-    public static class TreeNodeIter<T> implements Iterator<TreeNode<T>> {
+        private T data = null;
 
-        private final TreeNode<T> treeNode;
-        private final Iterator<TreeNode<T>> childrenCurNodeIter;
-        private ProcessStages doNext;
-        private TreeNode<T> next;
-        private Iterator<TreeNode<T>> childrenSubNodeIter;
-        public TreeNodeIter(TreeNode<T> treeNode) {
-            this.treeNode = treeNode;
-            this.doNext = ProcessStages.ProcessParent;
-            this.childrenCurNodeIter = treeNode.children.iterator();
+        private final List<Node<T>> children = new ArrayList<>();
+
+        private Node<T> parent = null;
+
+        public Node(T data) {
+            this.data = data;
         }
 
-        @Override
-        public boolean hasNext() {
+        public void addChild(Node<T> child) {
+            child.setParent(this);
+            this.children.add(child);
+        }
 
-            if (this.doNext == ProcessStages.ProcessParent) {
-                this.next = this.treeNode;
-                this.doNext = ProcessStages.ProcessChildCurNode;
-                return true;
-            }
+        private void addChildren(List<Node<T>> children) {
+            children.forEach(each -> each.setParent(this));
+            this.children.addAll(children);
+        }
 
-            if (this.doNext == ProcessStages.ProcessChildCurNode) {
-                if (childrenCurNodeIter.hasNext()) {
-                    TreeNode<T> childDirect = childrenCurNodeIter.next();
-                    childrenSubNodeIter = childDirect.iterator();
-                    this.doNext = ProcessStages.ProcessChildSubNode;
-                    return hasNext();
-                } else {
-                    this.doNext = null;
-                    return false;
+        private void remove(Node<T> child){
+            Node<T> root = child.getChildren().get(child.getChildren().size()-1);
+            root.setParent(child.getParent());
+            child.getChildren().remove(child.getChildren().size()-1);
+            root.children.addAll(child.getChildren());
+            for(int i=0;i<child.getParent().getChildren().size();i++){
+                if(child.getParent().getChildren().get(i)==child){
+                    child.getParent().getChildren().set(i,root);
                 }
             }
-
-            if (this.doNext == ProcessStages.ProcessChildSubNode) {
-                if (childrenSubNodeIter.hasNext()) {
-                    this.next = childrenSubNodeIter.next();
-                    return true;
-                } else {
-                    this.next = null;
-                    this.doNext = ProcessStages.ProcessChildCurNode;
-                    return hasNext();
-                }
-            }
-
-            return false;
         }
 
-        @Override
-        public TreeNode<T> next() {
-            return this.next;
+        private List<Node<T>> getChildren() {
+            return children;
         }
 
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
+        public T getData() {
+            return data;
         }
 
-        enum ProcessStages {
-            ProcessParent, ProcessChildCurNode, ProcessChildSubNode
+        public void setData(T data) {
+            this.data = data;
+        }
+
+        private void setParent(Node<T> parent) {
+            this.parent = parent;
+        }
+
+        public Node<T> getParent() {
+            return parent;
         }
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
