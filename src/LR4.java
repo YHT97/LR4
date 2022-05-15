@@ -1,9 +1,40 @@
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
+
 
 public class LR4 {
-    public class TreeNode<T> implements Iterable<TreeNode<T>> {
+    static class Data {
+        public int[] index;
+        public int data;
+        public String str;
+
+        public Data() {
+            this.index = getArray();
+            this.data = (int)(Math.random()*200-100);
+            this.str = RandString();
+        }
+    }
+    private static int[] getArray() {
+        int[] array = new int[3];
+        for (int i = 0; i < 3; i++) {
+            array[i] = (int) (Math.random() * 200) - 100;
+        }
+        return array;
+    }
+    private static String RandString(){
+        String alp = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        Random rand = new Random();
+        StringBuilder build = new StringBuilder();
+        for(int i=0;i<10;i++){
+            build.append(alp.charAt(rand.nextInt(alp.length())));
+        }
+        return build.toString();
+    }
+
+
+    public static class TreeNode<T> /*implements Iterable<TreeNode<T>>*/ {
 
         public T data;
         public TreeNode<T> parent;
@@ -61,14 +92,16 @@ public class LR4 {
         public String toString() {
             return data != null ? data.toString() : "[data null]";
         }
-
+        /*
         @Override
         public Iterator<TreeNode<T>> iterator() {
             return new TreeNodeIter<T>(this);
         }
+
+         */
     }
 
-
+    /*
     public class TreeNodeIter<T> implements Iterator<TreeNode<T>> {
 
         enum ProcessStages {
@@ -138,6 +171,7 @@ public class LR4 {
 
     }
 
+     */
 
     public static void main(String[] args){
 
