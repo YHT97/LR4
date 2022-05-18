@@ -1,11 +1,14 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 
-class TreeMain {
+class LR4 {
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         Node<String> root = new Node<>("root", 0);
         Node<String> temp = new Node<>("temp", -1);
-        Node<String> parent = null;
+        Node<String> parent;
         int index = 0;
         boolean flag = false;
         String gap = "    ";
@@ -26,7 +29,7 @@ class TreeMain {
                     for (int i = 0; i < length; i++) {
                         parent = root.addChild(new Node<>(getString(5), index++));
                         for (int j = 0; j < length; j++) {
-                            Node<String> leaf = parent.addChild(new Node<>(getString(5), index++));
+                            parent.addChild(new Node<>(getString(5), index++));
                         }
                     }
                 }
@@ -60,18 +63,15 @@ class TreeMain {
     }
 
     private static <T> void printTree(Node<T> node, String appender) {
-        System.out.println(appender + node.getData() + " (" + node.index + ")");
-        node.getChildren().forEach(each ->  printTree(each, appender + appender));
+        System.out.println(appender + node.getData() + " (" + node.getIndex() + ")");
+        node.getChildren().forEach(each -> printTree(each, appender + appender));
     }
 
     public static class Node<T> {
 
-        private  int index = 0;
-
-        private T data = null;
-
         private final List<Node<T>> children = new ArrayList<>();
-
+        private int index;
+        private T data;
         private Node<T> parent = null;
 
         public Node(T data, int index) {
@@ -86,9 +86,9 @@ class TreeMain {
             return child;
         }
 
-        private void remove(Node<T> child){//add index control
-            if(child.children.size()>0) {
-                Node<T> root = child.getChildren().get(child.getChildren().size()-1);
+        private void remove(Node<T> child) {
+            if (child.children.size() > 0) {
+                Node<T> root = child.getChildren().get(child.getChildren().size() - 1);
                 root.setParent(child.getParent());
                 child.getChildren().remove(child.getChildren().size() - 1);
                 root.children.addAll(child.getChildren());
@@ -97,7 +97,7 @@ class TreeMain {
                         child.getParent().getChildren().set(i, root);
                     }
                 }
-            }else{
+            } else {
                 for (int i = 0; i < child.getParent().getChildren().size(); i++) {
                     if (child.getParent().getChildren().get(i).index == child.index) {
                         child.getParent().getChildren().remove(i);
@@ -106,16 +106,14 @@ class TreeMain {
             }
         }
 
-        private void Tree(Node<T> node, Node<T> tmp, int index){
-            if(node.index==index){
-                //tmp=node;
+        private void Tree(Node<T> node, Node<T> tmp, int index) {
+            if (node.index == index) {
                 tmp.setIndex(node.getIndex());
                 tmp.setData(node.getData());
                 tmp.setParent(node.getParent());
                 tmp.addChildren(node.getChildren());
             }
-            Node<T> finalTmp = tmp;
-            node.getChildren().forEach(each->Tree(each, finalTmp,index));
+            node.getChildren().forEach(each -> Tree(each, tmp, index));
 
         }
 
@@ -132,24 +130,24 @@ class TreeMain {
             return data;
         }
 
-        public int getIndex() {
-            return index;
-        }
-
         public void setData(T data) {
             this.data = data;
+        }
+
+        public int getIndex() {
+            return index;
         }
 
         public void setIndex(int index) {
             this.index = index;
         }
 
-        private void setParent(Node<T> parent) {
-            this.parent = parent;
-        }
-
         public Node<T> getParent() {
             return parent;
+        }
+
+        private void setParent(Node<T> parent) {
+            this.parent = parent;
         }
 
     }
