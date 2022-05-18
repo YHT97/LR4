@@ -18,7 +18,6 @@ public class LR4 {
             }
         }
         printTree(tree,"*");
-        //tree.remove(Objects.requireNonNull(tree.Tree(tree, 12)));
         System.out.println("-----------------------------------------------------------------");
         printTree(tree,"*");
         tree.Tree(tree,Tmp,1);
@@ -60,6 +59,8 @@ public class LR4 {
             if(node.index==index){
                 tmp=node;
             }
+            Node<T> finalTmp = tmp;
+            node.getChildren().forEach(each -> Tree(each, finalTmp,index));
 
         }
 
