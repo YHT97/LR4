@@ -4,13 +4,15 @@ import java.util.Random;
 
 public class LR4 {
     public static void main(String[] args) {
-        Node<Integer> tree = new Node<>((int) (Math.random() * 100) -100);
+        Node<Integer> tree = new Node<>((int) (Math.random() * 100) -100,0);
+        int index=0;
         for (int i = 0;i<3;i++){
-            tree.addChild(new Node<>((int) (Math.random() * 100) -100));
+            tree.addChild(new Node<>((int) (Math.random() * 100) -100,++index));
+
         }
         for(Node<Integer> child : tree.getChildren()){
             for(int i =0;i<3;i++){
-                child.addChild(new Node<>((int) (Math.random() * 100) -100));
+                child.addChild(new Node<>((int) (Math.random() * 100) -100,++index));
             }
         }
         printTree(tree,"*");
@@ -22,23 +24,25 @@ public class LR4 {
 
     }
     private static <T> void printTree(Node<T> node, String appender) {
-        System.out.println(appender + node.getData());
+        System.out.println(appender + node.data + appender + node.index);
         node.getChildren().forEach(each -> printTree(each, appender + appender));
     }
 
     public static class Node<T> {
-
+        private  int index = 0;
         private T data = null;
 
         private final List<Node<T>> children = new ArrayList<>();
 
         private Node<T> parent = null;
 
-        public Node(T data) {
+        public Node(T data,int index) {
             this.data = data;
+            this.index = index;
         }
 
         public void addChild(Node<T> child) {
+            //child.index=++index;
             child.setParent(this);
             this.children.add(child);
         }
@@ -48,7 +52,7 @@ public class LR4 {
             this.children.addAll(children);
         }
 
-        private void remove(Node<T> child){
+        private void remove(Node<T> child){//add index control
             if(child.children.size()>0) {
             Node<T> root = child.getChildren().get(child.getChildren().size()-1);
             root.setParent(child.getParent());
