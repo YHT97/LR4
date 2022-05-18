@@ -21,7 +21,8 @@ public class LR4 {
         //tree.remove(Objects.requireNonNull(tree.Tree(tree, 12)));
         System.out.println("-----------------------------------------------------------------");
         printTree(tree,"*");
-        System.out.println(tree.Tree(tree,1));
+        tree.Tree(tree,Tmp,1);
+        System.out.println(Tmp);
 
 
     }
