@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class LR4 {
@@ -16,13 +17,14 @@ public class LR4 {
             }
         }
         printTree(tree,"*");
-        tree.remove(tree.getChildren().get(0).getChildren().get(0));
+        tree.remove(Objects.requireNonNull(tree.Tree(tree, 12)));
         System.out.println("-----------------------------------------------------------------");
         printTree(tree,"*");
-
+        System.out.println(tree.Tree(tree,0));
 
 
     }
+
     private static <T> void printTree(Node<T> node, String appender) {
         System.out.println(appender + node.data + appender + node.index);
         node.getChildren().forEach(each -> printTree(each, appender + appender));
@@ -51,6 +53,15 @@ public class LR4 {
             children.forEach(each -> each.setParent(this));
             this.children.addAll(children);
         }
+
+        private Node<T> Tree(Node<T> node,int index){
+            if (node.index==index){
+                return node;
+            }
+            node.getChildren().forEach(each -> Tree(each,index));
+            return  null;
+        }
+
 
         private void remove(Node<T> child){//add index control
             if(child.children.size()>0) {
