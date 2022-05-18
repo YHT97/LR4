@@ -5,6 +5,7 @@ import java.util.Random;
 
 public class LR4 {
     public static void main(String[] args) {
+        Node<Integer> Tmp = new Node<>(0,-1);
         Node<Integer> tree = new Node<>((int) (Math.random() * 100) -100,0);
         int index=0;
         for (int i = 0;i<3;i++){
@@ -17,10 +18,10 @@ public class LR4 {
             }
         }
         printTree(tree,"*");
-        tree.remove(Objects.requireNonNull(tree.Tree(tree, 12)));
+        //tree.remove(Objects.requireNonNull(tree.Tree(tree, 12)));
         System.out.println("-----------------------------------------------------------------");
         printTree(tree,"*");
-        System.out.println(tree.Tree(tree,0));
+        System.out.println(tree.Tree(tree,1));
 
 
     }
@@ -54,12 +55,11 @@ public class LR4 {
             this.children.addAll(children);
         }
 
-        private Node<T> Tree(Node<T> node,int index){
-            if (node.index==index){
-                return node;
+        private void Tree(Node<T> node,Node<T> tmp,int index){
+            if(node.index==index){
+                tmp=node;
             }
-            node.getChildren().forEach(each -> Tree(each,index));
-            return  null;
+
         }
 
 
